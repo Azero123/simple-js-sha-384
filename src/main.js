@@ -23,10 +23,11 @@ const k =
 
 
 function rotr(x, n) {
-    const a = x.toString(2).padStart(64, '0').slice(64 - n, 64)
-    const o = (x >> BigInt(n)).toString(2).padStart(64, '0')
-    return BigInt(`0b${a}${o.slice(n, 64)}`)
+    const b = (x >> (n))
+    const c = (x - (x >> (n) << n) << (64n - n))
+    return b+c
 }
+
 const utf8 = function (str) {
     var i, l = str.length,
       output = new Array(Math.ceil(str.length/64)*16).fill(0n)
@@ -82,15 +83,15 @@ module.exports = m => {
                 const w15 = w[i-15]
                 const w2 = w[i-2]
 
-                const s0 = rotr(w15, 1) ^ rotr(w15, 8) ^ (w15 >> 7n)
-                const s1 = rotr(w2, 19) ^ rotr(w2, 61) ^ (w2 >> 6n)
+                const s0 = rotr(w15, 1n) ^ rotr(w15, 8n) ^ (w15 >> 7n)
+                const s1 = rotr(w2, 19n) ^ rotr(w2, 61n) ^ (w2 >> 6n)
                 w[i] = (w[i-16] + s0 + w[i-7] + s1) % max
             }
 
-            const S1 = rotr(e, 14) ^ rotr(e, 18) ^ rotr(e, 41)
+            const S1 = rotr(e, 14n) ^ rotr(e, 18n) ^ rotr(e, 41n)
             const ch = (e & f) ^ (~e & g)
             const temp1 = (h + S1 + ch + k[i] + w[i]) % max
-            const S0 = rotr(a, 28) ^ rotr(a, 34) ^ rotr(a, 39)
+            const S0 = rotr(a, 28n) ^ rotr(a, 34n) ^ rotr(a, 39n)
             const maj = (a & b) ^ (a & c) ^ (b & c)
             const temp2 = (S0 + maj) % max
     
